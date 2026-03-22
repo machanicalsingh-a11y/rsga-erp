@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0"/>
+  <title>R.S. Global Academy — ERP v4.0</title>
+  <meta name="theme-color" content="#1F3864"/>
+  <meta name="apple-mobile-web-app-capable" content="yes"/>
+  <meta name="apple-mobile-web-app-title" content="RSGA ERP"/>
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
+  <link rel="manifest" href="manifest.json"/>
+  <script>
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('/rsga-erp/sw.js')
+          .then(() => console.log('SW registered'))
+          .catch(e => console.log('SW error:', e));
+      });
+    }
+  </script>
+  <link rel="stylesheet" href="style.css"/>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet"/>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet"/>
+  <!-- Login form extra styles to bridge v4 HTML with style.css -->
+  <style>
+    .login-card { background:#fff; border-radius:12px; box-shadow:0 20px 60px rgba(0,0,0,.2); padding:28px; }
+    .login-brand { text-align:center; margin-bottom:20px; }
+    .login-icon  { font-size:44px; }
+    .login-brand h1 { font-size:18px; font-weight:900; color:#1F3864; margin-top:6px; }
+    .login-sub   { font-size:12px; color:#94a3b8; }
+    .namami-badge { margin-top:10px; background:#fef9ec; border:1px solid #fde68a; color:#92400e; font-size:12px; font-weight:700; padding:5px 14px; border-radius:20px; display:inline-block; }
+    .login-form-section h2 { font-size:16px; font-weight:800; margin-bottom:14px; }
+    .alert-error { background:#fee2e2; color:#991b1b; padding:8px 12px; border-radius:8px; font-size:13px; margin-bottom:10px; }
+    .ql-label  { font-size:11px; font-weight:700; color:#94a3b8; text-transform:uppercase; margin-bottom:6px; }
+    .ql-grid   { display:flex; flex-wrap:wrap; gap:6px; margin-bottom:12px; }
+    .ql-btn    { padding:5px 12px; border:1.5px solid #e2e8f0; border-radius:7px; background:#f8fafc; cursor:pointer; font-size:12px; font-weight:700; font-family:inherit; transition:all .15s; }
+    .ql-btn:hover { border-color:#2E75B6; color:#2E75B6; }
+    .divider   { text-align:center; position:relative; margin:12px 0; }
+    .divider::before { content:''; position:absolute; top:50%; left:0; right:0; height:1px; background:#e2e8f0; }
+    .divider span { background:#fff; padding:0 10px; font-size:11px; color:#94a3b8; position:relative; }
+    .form-group { margin-bottom:12px; }
+    .form-group label { display:block; font-size:12px; font-weight:700; color:#475569; margin-bottom:4px; }
+    .input-wrap { position:relative; display:flex; align-items:center; }
+    .input-wrap i  { position:absolute; left:10px; color:#94a3b8; font-size:13px; }
+    .input-wrap input { width:100%; padding:9px 12px 9px 32px; border:1.5px solid #e2e8f0; border-radius:8px; font-size:13px; outline:none; font-family:inherit; }
+    .input-wrap input:focus { border-color:#2E75B6; }
+    .toggle-pw { position:absolute; right:8px; background:none; border:none; cursor:pointer; color:#94a3b8; }
+    .btn-login { width:100%; padding:11px; background:#1F3864; color:#fff; border:none; border-radius:8px; font-size:14px; font-weight:700; cursor:pointer; font-family:inherit; display:flex; align-items:center; justify-content:center; gap:8px; transition:background .15s; }
+    .btn-login:hover { background:#2E75B6; }
+    .btn-login:disabled { opacity:.6; cursor:not-allowed; }
+    .setup-card { background:rgba(255,255,255,.1); border:1px solid rgba(255,255,255,.2); border-radius:16px; padding:32px; text-align:center; max-width:400px; width:100%; }
+    .setup-log  { background:rgba(0,0,0,.3); border-radius:8px; padding:14px; max-height:300px; overflow-y:auto; text-align:left; margin-top:12px; }
+    #sb-nav { flex:1; padding:6px 0; }
+    .nav-item { display:flex; align-items:center; gap:10px; padding:10px 16px; color:rgba(255,255,255,.6); cursor:pointer; font-size:13px; border-left:3px solid transparent; transition:all .15s; }
+    .nav-item:hover  { background:rgba(255,255,255,.08); color:#fff; }
+    .nav-item.active { background:rgba(255,255,255,.13); color:#fff; border-left-color:#FFD700; font-weight:700; }
+    .nav-icon { font-size:16px; width:20px; text-align:center; }
+    #sidebar { position:fixed; left:0; top:0; bottom:0; width:240px; background:linear-gradient(180deg,#162c52,#1F3864); z-index:200; display:flex; flex-direction:column; overflow-y:auto; transition:transform .25s; }
+    .sb-top  { padding:16px; border-bottom:1px solid rgba(255,255,255,.08); }
+    .sb-school { color:#FFD700; font-weight:900; font-size:13px; }
+    .sb-loc    { color:rgba(255,255,255,.4); font-size:10px; margin-top:2px; }
+    #sb-user-card { margin-top:10px; background:rgba(255,255,255,.07); border-radius:8px; padding:10px; }
+    .sidebar-user-name  { color:#fff; font-weight:700; font-size:13px; }
+    .sidebar-user-role  { color:rgba(255,255,255,.55); font-size:11px; margin-top:3px; }
+    .sidebar-user-class { color:rgba(255,255,255,.45); font-size:10px; margin-top:2px; }
+    .sb-bottom { padding:10px 14px; border-top:1px solid rgba(255,255,255,.08); }
+    .sb-footer-text { font-size:10px; color:rgba(255,255,255,.25); text-align:center; margin-top:6px; }
+    .sync-row   { display:flex; align-items:center; gap:8px; }
+    .sync-dot   { width:8px; height:8px; border-radius:50%; background:#22c55e; }
+    .sync-status { font-size:11px; color:rgba(255,255,255,.6); }
+    .sync-time  { font-size:10px; color:rgba(255,255,255,.35); }
+    #topbar { position:fixed; top:0; left:240px; right:0; height:60px; background:#fff; border-bottom:1px solid #e2e8f0; display:flex; align-items:center; justify-content:space-between; padding:0 20px; z-index:150; box-shadow:0 2px 8px rgba(0,0,0,.06); }
+    .tb-left, .tb-right { display:flex; align-items:center; gap:10px; }
+    .tb-page { display:flex; align-items:center; gap:8px; font-size:15px; font-weight:800; }
+    .tb-date { font-size:12px; color:#94a3b8; }
+    .tb-pill { background:#dbeafe; color:#1e40af; font-size:11px; font-weight:700; padding:3px 10px; border-radius:20px; }
+    .btn-sm-danger { padding:6px 12px; background:#dc2626; color:#fff; border:none; border-radius:7px; cursor:pointer; font-size:12px; font-weight:700; display:flex; align-items:center; gap:5px; font-family:inherit; }
+    .hamburger { background:none; border:none; cursor:pointer; font-size:20px; color:#64748b; }
+    #main-content { margin-left:240px; padding:80px 20px 20px; min-height:100vh; }
+    #mobile-nav { display:none; }
+    #sb-overlay { display:none; }
+    @media(max-width:768px) {
+      #sidebar { transform:translateX(-100%); }
+      #sidebar.open { transform:translateX(0); }
+      #topbar { left:0 !important; }
+      #main-content { margin-left:0; padding-left:14px; padding-right:14px; }
+      #sb-overlay { display:block; position:fixed; inset:0; background:rgba(0,0,0,.45); z-index:199; display:none; }
+      #sb-overlay.show { display:block; }
+      #mobile-nav { display:flex; position:fixed; bottom:0; left:0; right:0; background:#fff; border-top:1px solid #e2e8f0; z-index:150; }
+      .mob-nav-item { flex:1; display:flex; flex-direction:column; align-items:center; padding:8px 4px; font-size:10px; color:#94a3b8; cursor:pointer; gap:3px; }
+      .mob-nav-item.active { color:#2E75B6; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ═══════════════════════════ LOGIN SCREEN ═══════════════════════════ -->
+<div id="login-screen">
+  <div class="login-bg">
+    <div class="login-card">
+      <div class="login-brand">
+        <div class="login-icon">🏫</div>
+        <h1>R.S. GLOBAL ACADEMY</h1>
+        <p class="login-sub">Jirauli, Mainpuri, U.P.</p>
+        <div class="namami-badge">🙏 Namami Sharde 🙏</div>
+      </div>
+      <div class="login-form-section">
+        <h2>Staff Login</h2>
+        <div id="login-error" class="alert-error" style="display:none"></div>
+        <div class="ql-label">Quick Login</div>
+        <div class="ql-grid" id="quick-btns"></div>
+        <div class="divider"><span>ya manually enter karein</span></div>
+        <div class="form-group">
+          <label>Username</label>
+          <div class="input-wrap">
+            <i class="fas fa-user"></i>
+            <input type="text" id="un" placeholder="username" autocapitalize="none" autocomplete="off"/>
+          </div>
+        </div>
+        <div class="form-group">
+          <label>Password</label>
+          <div class="input-wrap">
+            <i class="fas fa-lock"></i>
+            <input type="password" id="pw" placeholder="password"/>
+            <button class="toggle-pw" id="toggle-pw-btn" tabindex="-1">
+              <i class="fas fa-eye" id="pw-eye"></i>
+            </button>
+          </div>
+        </div>
+        <button id="login-btn" class="btn-login">
+          <i class="fas fa-sign-in-alt"></i> Login
+        </button>
+        <div style="text-align:center;margin-top:14px">
+          <span style="font-size:12px;color:#94a3b8">Pehli baar? </span>
+          <a href="#" id="setup-link" style="font-size:12px;color:#2E75B6;font-weight:700">First Time Setup karein →</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════ SETUP SCREEN ═══════════════════════════ -->
+<div id="setup-screen" style="display:none">
+  <div class="login-bg">
+    <div class="setup-card">
+      <div style="font-size:48px;margin-bottom:12px">🚀</div>
+      <h2 style="color:#FFD700;margin-bottom:8px">First Time Setup</h2>
+      <p style="color:rgba(255,255,255,.7);font-size:13px;margin-bottom:20px">
+        Staff accounts Firebase mein create ho rahe hain...
+      </p>
+      <div id="setup-log" class="setup-log"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════ MAIN APP ═══════════════════════════ -->
+<div id="app-screen" style="display:none">
+
+  <div id="sb-overlay" onclick="closeSidebar()"></div>
+
+  <!-- SIDEBAR -->
+  <aside id="sidebar">
+    <div class="sb-top">
+      <div class="sb-school">🏫 R.S. Global Academy</div>
+      <div class="sb-loc">Jirauli, Mainpuri</div>
+      <div class="sb-user-card" id="sb-user-card"></div>
+    </div>
+    <nav id="sb-nav"></nav>
+    <div class="sb-bottom">
+      <div class="sync-row">
+        <div class="sync-dot" id="sync-dot"></div>
+        <div>
+          <div class="sync-status" id="sync-status">Connecting...</div>
+          <div class="sync-time" id="sync-time"></div>
+        </div>
+        <div class="sync-count" id="sync-count"></div>
+      </div>
+      <div class="sb-footer-text">🙏 Namami Sharde 🙏 • 2025-26</div>
+    </div>
+  </aside>
+
+  <!-- TOPBAR -->
+  <header id="topbar">
+    <div class="tb-left">
+      <button class="hamburger" id="hamburger-btn">
+        <i class="fas fa-bars"></i>
+      </button>
+      <div class="tb-page">
+        <i class="fas fa-gauge" id="tb-icon"></i>
+        <span id="tb-title">Dashboard</span>
+      </div>
+    </div>
+    <div class="tb-right">
+      <span id="tb-date" class="tb-date"></span>
+      <div class="tb-pill" id="tb-pill"></div>
+      <button class="btn-sm-danger" id="logout-btn">
+        <i class="fas fa-sign-out-alt"></i> Logout
+      </button>
+    </div>
+  </header>
+
+  <!-- MAIN CONTENT -->
+  <main id="main-content"></main>
+
+  <!-- MOBILE NAV -->
+  <nav id="mobile-nav"></nav>
+
+</div>
+
+<!-- ═══════════════════════════ MODAL ═══════════════════════════ -->
+<div id="modal-overlay" style="display:none">
+  <div class="modal-box" id="modal-box">
+    <div class="modal-head">
+      <h3 id="modal-title"></h3>
+      <button class="modal-close" id="modal-close-btn"><i class="fas fa-times"></i></button>
+    </div>
+    <div class="modal-body" id="modal-body"></div>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div id="toast"></div>
+
+<script type="module" src="app.js"></script>
+</body>
+</html>

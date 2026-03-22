@@ -1,0 +1,28 @@
+{
+  "name": "R.S. Global Academy ERP",
+  "short_name": "RSGA ERP",
+  "description": "R.S. Global Academy — School Management System",
+  "start_url": "/rsga-erp/",
+  "scope": "/rsga-erp/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "theme_color": "#1F3864",
+  "background_color": "#1F3864",
+  "icons": [
+    {
+      "src": "https://raw.githubusercontent.com/twitter/twemoji/master/assets/72x72/1f3eb.png",
+      "sizes": "72x72",
+      "type": "image/png"
+    },
+    {
+      "src": "https://raw.githubusercontent.com/twitter/twemoji/master/assets/72x72/1f3eb.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "https://raw.githubusercontent.com/twitter/twemoji/master/assets/72x72/1f3eb.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}
